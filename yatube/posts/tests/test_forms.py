@@ -116,7 +116,7 @@ class PostFormTests(TestCase):
             ).exists()
         )
 
-        response = self.authorized_client.post(
+        self.authorized_client.post(
             reverse(
                 "posts:add_comment", kwargs={"post_id": PostFormTests.post.pk}
             ),

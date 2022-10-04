@@ -84,7 +84,9 @@ def post_edit(request, post_id):
     if post.author != request.user:
         return redirect("posts:post_detail", post_id)
 
-    form = PostForm(request.POST or None, files=request.FILES or None, instance=post)
+    form = PostForm(
+        request.POST or None, files=request.FILES or None, instance=post
+    )
     if form.is_valid():
         form.save()
         return redirect("posts:post_detail", post_id)
@@ -133,7 +135,9 @@ def profile_follow(request, username):
 
 @login_required
 def profile_unfollow(request, username):
-    unfollow_author = Follow.objects.get(user=request.user, author__username=username)
+    unfollow_author = Follow.objects.get(
+        user=request.user, author__username=username
+    )
     unfollow_author.delete()
 
     return redirect("posts:profile", username)
