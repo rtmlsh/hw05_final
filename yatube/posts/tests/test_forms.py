@@ -102,7 +102,7 @@ class PostFormTests(TestCase):
             "text": "Комментарий для проверки формы",
         }
 
-        response = self.guest_client.post(
+        self.guest_client.post(
             reverse(
                 "posts:add_comment", kwargs={"post_id": PostFormTests.post.pk}
             ),
