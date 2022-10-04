@@ -1,0 +1,54 @@
+{% load user_filters %}
+<div class="card-header">
+{% if is_edit %}
+    Редактировать пост
+{% else %}
+    Новый пост
+{% endif %}
+</div>
+<div class="card-body">
+      {% if form.errors %}
+          {% for field in form %}
+            {% for error in field.errors %}
+              <div class="alert alert-danger">
+                {{ error|escape }}
+              </div>
+            {% endfor %}
+          {% endfor %}
+          {% for error in form.non_field_errors %}
+            <div class="alert alert-danger">
+              {{ error|escape }}
+            </div>
+          {% endfor %}
+      {% endif %}
+
+    {% if is_edit %}
+    <form method="post" enctype="multipart/form-data" action="{% url 'posts:update_post' post_id %}">
+    {% endif %}
+    <form method="post" enctype="multipart/form-data" action="{% url 'posts:new_post' %}">
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="form-group row my-3 p-3">
+      <label>
+          {{ field.label_tag }}
+          {% if field.field.required %}
+              <span class="required text-danger">*</span>
+          {% endif %}
+       </label>
+      {{ field|addclass:'form-control' }}
+      <small class="form-text text-muted">{{ field.help_text }}</small>
+    </div>
+    {% endfor %}
+    <div class="d-flex justify-content-end">
+        {% if is_edit %}
+      <button type="submit" class="btn btn-primary">
+          Добавить
+      </button>
+        {% else %}
+       <button type="submit" class="btn btn-primary">
+        Сохранить
+       </button>
+        {% endif %}
+    </div>
+</form>
+</div>
