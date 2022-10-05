@@ -232,10 +232,14 @@ class FollowViewsTests(TestCase):
         self.authorized_another_follower = Client()
         self.authorized_another_follower.force_login(self.another_user)
 
-    def test_follow_and_unfollow_author(self):
+    def test_follow_author(self):
         self.authorized_follower.get(
             reverse("posts:profile_follow", kwargs={"username": self.author})
         )
+        self.authorized_author.get(
+            reverse("posts:profile_follow", kwargs={"username": self.author})
+        )
+
         self.assertTrue(
             Follow.objects.filter(user=self.user, author=self.author).exists()
         )
@@ -243,9 +247,11 @@ class FollowViewsTests(TestCase):
             Follow.objects.count(), 1
         )
 
+    def test_unfollow_author(self):
         self.authorized_follower.get(
             reverse("posts:profile_unfollow", kwargs={"username": self.author})
         )
+
         self.assertFalse(
             Follow.objects.filter(user=self.user, author=self.author).exists()
         )
