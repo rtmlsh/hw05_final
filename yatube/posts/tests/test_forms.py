@@ -97,8 +97,6 @@ class PostFormTests(TestCase):
 
     def test_comment_post(self):
         form_data = {
-            "post": PostFormTests.post,
-            "author": PostFormTests.user,
             "text": "Комментарий для проверки формы",
         }
 
@@ -110,8 +108,6 @@ class PostFormTests(TestCase):
         )
         self.assertFalse(
             Comment.objects.filter(
-                post=form_data["post"],
-                author=form_data["author"],
                 text=form_data["text"]
             ).exists()
         )
@@ -124,8 +120,6 @@ class PostFormTests(TestCase):
         )
         self.assertTrue(
             Comment.objects.filter(
-                post=form_data["post"],
-                author=form_data["author"],
                 text=form_data["text"]
             ).exists()
         )
