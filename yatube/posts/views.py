@@ -113,8 +113,9 @@ def add_comment(request, post_id):
 
 @login_required
 def follow_index(request):
+    post_list = Post.objects.filter(
+        author__following__user=request.user)
     user = get_object_or_404(User, username=request.user)
-    post_list = Follow.objects.get(user=user).author.posts.all()
     page_obj = make_paginator(request, post_list)
 
     context = {"page_obj": page_obj, "user": user}
