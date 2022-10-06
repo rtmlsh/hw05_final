@@ -42,8 +42,8 @@ def profile(request, username):
     page_obj = make_paginator(request, post_list)
 
     following = (
-            request.user.is_authenticated and
-            Follow.objects.filter(user=request.user, author=user).exists()
+        request.user.is_authenticated
+        and Follow.objects.filter(user=request.user, author=user).exists()
     )
 
     context = {"username": user, "page_obj": page_obj, "following": following}
@@ -87,8 +87,11 @@ def post_edit(request, post_id):
         return redirect("posts:post_detail", post_id)
 
     form = PostForm(
-        request.POST or None, files=request.FILES or None, instance=post
+        request.POST or None,
+        files=request.FILES or None,
+        instance=post
     )
+
     if form.is_valid():
         form.save()
         return redirect("posts:post_detail", post_id)
@@ -116,8 +119,7 @@ def add_comment(request, post_id):
 @login_required
 def follow_index(request):
     user = get_object_or_404(User, username=request.user)
-    post_list = Post.objects.filter(
-        author__following__user=request.user)
+    post_list = Post.objects.filter(author__following__user=request.user)
     page_obj = make_paginator(request, post_list)
 
     context = {"page_obj": page_obj, "user": user}
@@ -129,19 +131,14 @@ def follow_index(request):
 def profile_follow(request, username):
     user = get_object_or_404(User, username=username)
     if request.user != user:
-        Follow.objects.get_or_create(
-            user=request.user,
-            author=user
-        )
+        Follow.objects.get_or_create(user=request.user, author=user)
 
-    return redirect('posts:profile', username=username)
+    return redirect("posts:profile", username=username)
 
 
 @login_required
 def profile_unfollow(request, username):
     author = get_object_or_404(User, username=username)
-    Follow.objects.filter(
-        user=request.user, author=author
-    ).delete()
+    Follow.objects.filter(user=request.user, author=author).delete()
 
     return redirect("posts:profile", username)
