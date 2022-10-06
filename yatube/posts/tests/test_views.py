@@ -176,9 +176,7 @@ class PostViewsTests(TestCase):
             group=group,
         )
 
-        response_index_page = (
-            self.authorized_client.get(reverse("posts:posts"))
-        )
+        response_index_page = self.authorized_client.get(reverse("posts:posts"))
         response_group_page = self.authorized_client.get(
             reverse("posts:group", kwargs={"slug": group.slug})
         )
@@ -188,9 +186,7 @@ class PostViewsTests(TestCase):
 
         test_post_on_index = response_index_page.context["page_obj"][0]
         test_post_on_group_page = response_group_page.context["page_obj"][0]
-        test_post_on_profile_page = (
-            response_profile_page.context["page_obj"][0]
-        )
+        test_post_on_profile_page = response_profile_page.context["page_obj"][0]
 
         self.assertEqual(test_post_on_index.text, post.text)
         self.assertEqual(test_post_on_group_page.group, group)
@@ -243,9 +239,7 @@ class FollowViewsTests(TestCase):
         self.assertTrue(
             Follow.objects.filter(user=self.user, author=self.author).exists()
         )
-        self.assertEqual(
-            Follow.objects.count(), 1
-        )
+        self.assertEqual(Follow.objects.count(), 1)
 
     def test_unfollow_author(self):
         self.authorized_follower.get(
@@ -258,15 +252,13 @@ class FollowViewsTests(TestCase):
 
     def test_follow_feed(self):
         author_post = Post.objects.create(
-                author=self.author,
-                text="Тестовый пост автора",
+            author=self.author,
+            text="Тестовый пост автора",
         )
         self.authorized_follower.get(
             reverse("posts:profile_follow", kwargs={"username": self.author})
         )
-        post_in_user_feed = (
-            Follow.objects.get(user=self.user).author.posts.all()
-        )
+        post_in_user_feed = Follow.objects.get(user=self.user).author.posts.all()
 
         self.assertTrue(
             post_in_user_feed.filter(text=author_post.text).exists()
