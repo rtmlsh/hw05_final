@@ -8,8 +8,8 @@ from .models import Follow, Group, Post, User
 
 
 def make_paginator(request, post_list):
-    pages: int = 10
-    paginator = Paginator(post_list, pages)
+    PAGES: int = 10
+    paginator = Paginator(post_list, PAGES)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
     return page_obj
@@ -41,9 +41,10 @@ def profile(request, username):
     post_list = user.posts.all().select_related("author")
     page_obj = make_paginator(request, post_list)
 
-    following = request.user.is_authenticated
-    if following:
-        following = Follow.objects.filter(user=request.user).exists()
+    following = (
+            request.user.is_authenticated and
+            Follow.objects.filter(user=request.user, author=user).exists()
+    )
 
     context = {"username": user, "page_obj": page_obj, "following": following}
     return render(request, "posts/profile.html", context)
@@ -138,8 +139,9 @@ def profile_follow(request, username):
 
 @login_required
 def profile_unfollow(request, username):
-    unfollow_author = get_object_or_404(
-        Follow, user=request.user, author__username=username
+    author = get_object_or_404(User, username=username)
+    unfollow_author = Follow.objects.filter(
+        user=request.user, author=author
     ).delete()
 
     return redirect("posts:profile", username)
