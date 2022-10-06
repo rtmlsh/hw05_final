@@ -257,6 +257,22 @@ class FollowViewsTests(TestCase):
         )
 
     def test_follow_feed(self):
+        author_post = Post.objects.create(
+                author=self.author,
+                text="Тестовый пост автора",
+        )
+        self.authorized_follower.get(
+            reverse("posts:profile_follow", kwargs={"username": self.author})
+        )
+        post_in_user_feed = (
+            Follow.objects.get(user=self.user).author.posts.all()
+        )
+
+        self.assertTrue(
+            post_in_user_feed.filter(text=author_post.text).exists()
+        )
+
+    def test_follow_in_right_feed(self):
         user_post = Post.objects.create(
             author=self.user,
             text="Тестовый пост фолловера",
@@ -273,19 +289,9 @@ class FollowViewsTests(TestCase):
             reverse("posts:profile_follow", kwargs={"username": self.author})
         )
 
-        post_in_user_feed = (
-            Follow.objects.get(user=self.user).author.posts.all()
-        )
         post_in_another_user_feed = Follow.objects.get(
             user=self.another_user
         ).author.posts.all()
-
-        self.assertTrue(
-            post_in_user_feed.filter(text=author_post.text).exists()
-        )
-        self.assertFalse(
-            post_in_user_feed.filter(text=user_post.text).exists()
-        )
 
         self.assertTrue(
             post_in_another_user_feed.filter(text=user_post.text).exists()
