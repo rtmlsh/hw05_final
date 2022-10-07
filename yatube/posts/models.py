@@ -88,4 +88,7 @@ class Follow(models.Model):
         return f"{self.user} подписан на {self.author}"
 
     class Meta:
-        unique_together = ("user", "author")
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "author"], name="unique_follow")
+        ]
