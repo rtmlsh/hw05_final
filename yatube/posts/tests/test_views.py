@@ -236,13 +236,16 @@ class FollowViewsTests(TestCase):
         self.authorized_follower.get(
             reverse("posts:profile_follow", kwargs={"username": self.author})
         )
-        self.authorized_author.get(
-            reverse("posts:profile_follow", kwargs={"username": self.author})
-        )
 
         self.assertTrue(
             Follow.objects.filter(user=self.user, author=self.author).exists()
         )
+
+    def test_do_not_self_following(self):
+        self.authorized_author.get(
+            reverse("posts:profile_follow", kwargs={"username": self.author})
+        )
+
         self.assertFalse(
             Follow.objects.filter(user=self.author, author=self.author).exists()
         )
