@@ -243,7 +243,9 @@ class FollowViewsTests(TestCase):
         self.assertTrue(
             Follow.objects.filter(user=self.user, author=self.author).exists()
         )
-        self.assertEqual(Follow.objects.count(), 1)
+        self.assertFalse(
+            Follow.objects.filter(user=self.author, author=self.author).exists()
+        )
 
     def test_unfollow_author(self):
         self.authorized_follower.get(
